@@ -1,0 +1,27 @@
+services:
+  backend:
+    build: .
+    volumes:
+      - type: bind
+        source: ../
+        target: /src/backend
+    environment:
+      - DATABASE_URL=postgresql://docker:password@database:5432/chat
+    tty: true
+  database:
+    image: postgres
+    volumes:
+      - type: volume
+        source: data
+        target: /var/lib/postgresql/data
+      - type: bind
+        source: ../../database
+        target: /docker-entrypoint-initdb.d
+    environment:
+      - POSTGRES_USER=docker
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=chat
+      - POSTGRES_HOSTNAME=localhost
+      - POSTGRES_PORT=5432
+volumes:
+  data:

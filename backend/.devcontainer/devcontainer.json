@@ -1,0 +1,15 @@
+{
+  "name": "Backend",
+  "dockerComposeFile": "compose.yaml",
+  "service": "backend",
+  "workspaceFolder": "/src/backend",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "rust-lang.rust-analyzer",
+        "tamasfe.even-better-toml",
+        "redhat.vscode-yaml"
+      ]
+    }
+  }
+}
