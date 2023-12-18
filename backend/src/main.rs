@@ -8,8 +8,8 @@ use controller::handler::ChannelState;
 use sqlx::postgres::PgPoolOptions;
 use std::{env, sync::Arc};
 
-use infrastructure::database::PostgresChannelRepository;
-use usecase::channel::CreateChannelUseCase;
+use infrastructure::database::{PostgresChannelRepository, PostgresMessageRepository};
+use usecase::{channel::CreateChannelUseCase, message::SendMessageUsecase};
 
 #[tokio::main]
 async fn main() {
@@ -20,12 +20,23 @@ async fn main() {
         .await
         .unwrap();
 
-    let channel_repository = PostgresChannelRepository::new(pgpool);
+    let channel_repository = PostgresChannelRepository::new(pgpool.clone());
     let create_channel_usecase = CreateChannelUseCase::new(channel_repository);
-    let channel_state = Arc::new(ChannelState::new(create_channel_usecase));
+
+    let message_repository = PostgresMessageRepository::new(pgpool);
+    let send_message_usecase = SendMessageUsecase::new(message_repository);
+
+    let channel_state = Arc::new(ChannelState::new(
+        create_channel_usecase,
+        send_message_usecase,
+    ));
 
     let channel_routes = Router::new()
-        .route("/", post(controller::handler::create_channels))
+        .route("/", post(controller::handler::create_channel))
+        .route(
+            "/:channel_id/messages",
+            post(controller::handler::send_message),
+        )
         .with_state(channel_state);
 
     let routes = Router::new().nest("/channels", channel_routes);

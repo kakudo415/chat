@@ -1,0 +1,21 @@
+use uuid::Uuid;
+
+use crate::domain::{model::Message, repository::MessageRepository};
+
+#[derive(Clone)]
+pub struct SendMessageUsecase<MR> {
+    message_repository: MR,
+}
+
+impl<MR> SendMessageUsecase<MR>
+where
+    MR: MessageRepository,
+{
+    pub fn new(message_repository: MR) -> Self {
+        SendMessageUsecase { message_repository }
+    }
+
+    pub async fn send(&self, text: String, channel_id: Uuid) -> Message {
+        self.message_repository.create(text, channel_id).await
+    }
+}
