@@ -1,3 +1,4 @@
+use sqlx::types::chrono::{DateTime, Utc};
 use uuid::Uuid;
 
 pub struct Channel {
@@ -26,6 +27,7 @@ pub struct Message {
     id: Uuid,
     text: String,
     channel_id: Uuid,
+    created_at: DateTime<Utc>,
 }
 
 impl Message {
@@ -34,6 +36,21 @@ impl Message {
             id: Uuid::now_v7(),
             text,
             channel_id,
+            created_at: Utc::now(),
+        }
+    }
+
+    pub fn from_raw_parts(
+        id: Uuid,
+        text: String,
+        channel_id: Uuid,
+        created_at: DateTime<Utc>,
+    ) -> Self {
+        Message {
+            id,
+            text,
+            channel_id,
+            created_at,
         }
     }
 
@@ -47,5 +64,9 @@ impl Message {
 
     pub fn channel_id(&self) -> Uuid {
         self.channel_id
+    }
+
+    pub fn created_at(&self) -> DateTime<Utc> {
+        self.created_at
     }
 }

@@ -32,6 +32,7 @@ impl ChannelRepository for PostgresChannelRepository {
     }
 }
 
+#[derive(Clone)]
 pub struct PostgresMessageRepository {
     pool: Pool<Postgres>,
 }
@@ -56,5 +57,19 @@ impl MessageRepository for PostgresMessageRepository {
         .await
         .unwrap();
         message
+    }
+
+    async fn list(&self, channel_id: Uuid) -> Vec<Message> {
+        let rows = sqlx::query!("SELECT * FROM messages WHERE channel_id = $1", channel_id)
+            .fetch_all(&self.pool)
+            .await
+            .unwrap();
+        let mut messages = Vec::new();
+        for row in rows {
+            let message =
+                Message::from_raw_parts(row.id, row.text, row.channel_id, row.created_at.and_utc());
+            messages.push(message);
+        }
+        messages
     }
 }

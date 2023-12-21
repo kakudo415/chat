@@ -44,3 +44,10 @@ localhost:3000/channels/CHANNEL_ID/messages
   "channel_id": "CHANNEL_ID"
 }
 ```
+
+### List
+
+```sh
+curl -X GET \
+localhost:3000/channels/CHANNEL_ID/messages
+```

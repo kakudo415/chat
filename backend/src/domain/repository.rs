@@ -11,4 +11,5 @@ pub trait ChannelRepository {
 #[async_trait]
 pub trait MessageRepository {
     async fn create(&self, text: String, channel_id: Uuid) -> Message;
+    async fn list(&self, channel_id: Uuid) -> Vec<Message>;
 }
