@@ -60,7 +60,7 @@ impl MessageRepository for PostgresMessageRepository {
     }
 
     async fn list(&self, channel_id: Uuid) -> Vec<Message> {
-        let rows = sqlx::query!("SELECT * FROM messages WHERE channel_id = $1", channel_id)
+        let rows = sqlx::query!("SELECT * FROM messages WHERE channel_id = $1 ORDER BY created_at DESC", channel_id)
             .fetch_all(&self.pool)
             .await
             .unwrap();
